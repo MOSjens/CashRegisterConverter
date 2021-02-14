@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<ORDER_LIST>
+	<ORDER xmlns="http://www.opentrans.org/XMLSchema/1.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="1.0" type="standard">
+		<ORDER_HEADER>
+			<CONTROL_INFO>
+				<GENERATOR_INFO></GENERATOR_INFO>
+				<GENERATION_DATE></GENERATION_DATE>
+			</CONTROL_INFO>
+			<ORDER_INFO>
+				<ORDER_ID></ORDER_ID>
+				<ORDER_DATE></ORDER_DATE>
+				<ORDER_PARTIES>
+					<BUYER_PARTY>
+						<PARTY>
+							<ADDRESS>
+								<NAME></NAME>
+								<NAME2></NAME2>
+								<NAME3></NAME3>
+								<STREET></STREET>
+								<ZIP></ZIP>
+								<CITY></CITY>
+								<COUNTRY></COUNTRY>
+								<PHONE type="other"/>
+								<FAX/>
+								<EMAIL></EMAIL>
+							</ADDRESS>
+						</PARTY>
+					</BUYER_PARTY>
+					<INVOICE_PARTY>
+						<PARTY>
+							<ADDRESS>
+								<NAME></NAME>
+								<NAME2>Diverse</NAME2>
+								<NAME3></NAME3>
+								<STREET>Wilhelm-Schwarz Str. 11</STREET>
+								<ZIP>74821</ZIP>
+								<CITY>Mosbach</CITY>
+								<COUNTRY>Deutschland</COUNTRY>
+								<PHONE type="other"/>
+								<FAX/>
+								<EMAIL></EMAIL>
+							</ADDRESS>
+						</PARTY>
+					</INVOICE_PARTY>
+					<SUPPLIER_PARTY>
+						<PARTY>
+							<ADDRESS>
+								<NAME></NAME>
+								<NAME2></NAME2>
+								<NAME3></NAME3>
+								<STREET></STREET>
+								<ZIP></ZIP>
+								<CITY></CITY>
+								<COUNTRY></COUNTRY>
+								<VAT_ID></VAT_ID>
+								<EMAIL></EMAIL>
+							</ADDRESS>
+						</PARTY>
+					</SUPPLIER_PARTY>
+				</ORDER_PARTIES>
+				<PRICE_CURRENCY>EUR</PRICE_CURRENCY>
+				<PAYMENT>
+				<CASH>
+					<PAYMENT_TERM type="unece">56</PAYMENT_TERM>
+				</CASH>
+			</PAYMENT>
+				<REMARK type="delivery_method"></REMARK>
+				<REMARK type="shipping_fee"></REMARK>
+				<REMARK type="tax_area">EU</REMARK>
+				<REMARK type="order"></REMARK>
+				<REMARK type="additional_costs"></REMARK>
+			</ORDER_INFO>
+		</ORDER_HEADER>
+		<ORDER_ITEM_LIST>
+		</ORDER_ITEM_LIST>
+		<ORDER_SUMMARY>
+			<TOTAL_ITEM_NUM></TOTAL_ITEM_NUM>
+			<TOTAL_AMOUNT></TOTAL_AMOUNT>
+		</ORDER_SUMMARY>
+	</ORDER>
+</ORDER_LIST>
