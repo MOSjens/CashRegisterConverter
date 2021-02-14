@@ -1,5 +1,7 @@
 # CashRegisterConverter
 
+[![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
+
 The Cash Register Converter gets a csv file containing orders and returns a xml file in the OpenTrans format which 
 is readable by the accounting software Lexware. It has a user interface for easier operation.
 
