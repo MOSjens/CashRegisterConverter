@@ -29,3 +29,11 @@ mvn package
 - download the file ``tbd``
 - Start the program by executing the file
 
+## Version overview:
+
+ Version | Date | Changes
+ ------- | ---- | -------
+1.0-SNAPSHOT | 15.02.2021 | initial Release version 
+1.1 | 20.09.2022 | - All column after the third where shifted by one <br /> - Multi country support: if the country is not Germany, the tax is zero 
+
+

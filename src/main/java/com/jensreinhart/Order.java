@@ -6,10 +6,12 @@ import java.util.List;
 public class Order {
 
     private String date;
+    private boolean isGerman;
     private List<OrderItem> orderItemList;
 
-    public Order(String date) {
+    public Order(String date, boolean isGerman) {
         this.date = date;
+        this.isGerman = isGerman;
         this.orderItemList = new ArrayList<>();
     }
 
@@ -19,5 +21,9 @@ public class Order {
 
     public List<OrderItem> getOrderItemList() {
         return orderItemList;
+    }
+
+    public boolean getIsGerman(){
+        return isGerman;
     }
 }

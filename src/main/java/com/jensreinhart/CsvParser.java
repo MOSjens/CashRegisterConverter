@@ -5,10 +5,7 @@ import com.opencsv.CSVParserBuilder;
 import com.opencsv.CSVReader;
 import com.opencsv.CSVReaderBuilder;
 import com.opencsv.exceptions.CsvValidationException;
-import com.sun.scenario.effect.impl.sw.java.JSWBlend_SRC_OUTPeer;
-import org.w3c.dom.ls.LSOutput;
 
-import javax.accessibility.AccessibleValue;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
@@ -20,6 +17,19 @@ public class CsvParser {
 
     private static final String PAYMENT_EC = "EC";
     private static final String PAYMENT_CASH = "BAR";
+    private static final String CANCELLATION = "ja";
+    private static final String TAX_MODE_FRANCE = "TVA francaise";
+
+    // After the france update all columns after the date column are +1
+    private static final int DATE_COLUMN = 3;
+    private static final int TAX_MODE_COLUMN = 4;
+    private static final int PAYMENT_COLUMN = 11;
+    private static final int ARTICLE_ID_COLUMN = 14;
+    private static final int DESCRIPTION_COLUMN = 15;
+    private static final int QUANTITY_COLUMN = 19;
+    private static final int CANCELLATION_COLUMN = 21;
+    private static final int PRICE_COLUMN = 23;
+    private static final int TAX_COLUMN = 29;
 
     private File csvFile;
 
@@ -45,14 +55,16 @@ public class CsvParser {
             }
         }
 
-        // get date from first entry
-        String date = csvContent.get(1).get(3).substring(0 ,9).concat("T00:00:00+00:00"); // convert to desired format
-        Order order = new Order(date);
+        // get date and the country from first row
+        String date = csvContent.get(1).get(DATE_COLUMN).substring(0 ,10).concat("T00:00:00+00:00"); // convert to desired format
+        String taxMode = csvContent.get(1).get(TAX_MODE_COLUMN);
+        Order order = new Order(date, !taxMode.equals(TAX_MODE_FRANCE));
 
         csvContent.stream()
                 .skip(1)
-                .filter(item -> item.get(10).equals(payment))
-                .filter(item -> !item.get(13).isEmpty()) // ignore if article id is empty
+                .filter(item -> item.get(PAYMENT_COLUMN).equals(payment))
+                .filter(item -> !item.get(CANCELLATION_COLUMN).equals(CANCELLATION)) // ignore canceled orders
+                .filter(item -> !item.get(ARTICLE_ID_COLUMN).isEmpty()) // ignore if article id is empty
                 .forEach(item -> order.getOrderItemList().add(processOrderItem(item)));
 
         return order;
@@ -61,22 +73,22 @@ public class CsvParser {
     private OrderItem processOrderItem(List<String> item){
 
         int articleId;
-        String description = item.get(14);
+        String description = item.get(DESCRIPTION_COLUMN);
         double quantity;
         double unitPrice;
-        double tax = (Double.parseDouble(item.get(28)) / 100); // tax in percent
+        double tax = (Double.parseDouble(item.get(TAX_COLUMN)) / 100); // tax in percent
 
         /**
          * If the article number starts with an A the unit is half meter and has to be converted in meter
          */
-        if (item.get(13).startsWith("A")) {
-            articleId = Integer.parseInt(item.get(13).substring(1)); // remove letter A
-            quantity = (parseDouble(item.get(18)) / 2 ); // halve quantity
-            unitPrice = (parseDouble(item.get(22)) * 2 ); // double price
+        if (item.get(ARTICLE_ID_COLUMN).startsWith("A")) {
+            articleId = Integer.parseInt(item.get(ARTICLE_ID_COLUMN).substring(1)); // remove letter A
+            quantity = (parseDouble(item.get(QUANTITY_COLUMN)) / 2 ); // halve quantity
+            unitPrice = (parseDouble(item.get(PRICE_COLUMN)) * 2 ); // double price
         } else {
-            articleId = Integer.parseInt(item.get(13));
-            quantity = parseDouble(item.get(18));
-            unitPrice = parseDouble(item.get(22));
+            articleId = Integer.parseInt(item.get(ARTICLE_ID_COLUMN));
+            quantity = parseDouble(item.get(QUANTITY_COLUMN));
+            unitPrice = parseDouble(item.get(PRICE_COLUMN));
         }
 
         OrderItem orderItem = new OrderItem(

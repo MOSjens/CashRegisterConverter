@@ -20,9 +20,12 @@ public class XmlCreator {
     private static final String TEMPLATE_FILE = "/template.xml";
     private static final String FILE_NAME = "LaxwareImport";
     private static final String XML_SUFFIX = ".xml";
+    private static final String GERMAN_INVOICE_PARTY_NAME = "Diverse";
+    private static final String FRANCE_INVOICE_PARTY_NAME = "Diverse - Ausland";
 
     // All node names
     private static final String XML_ORDER_DATE = "ORDER_DATE";
+    private static final String XML_INVOICE_PARTY_NAME = "NAME2";
     private static final String XML_ORDER_ITEM_LIST = "ORDER_ITEM_LIST";
     private static final String XML_ORDER_ITEM = "ORDER_ITEM";
     private static final String XML_LINE_ITEM_ID = "LINE_ITEM_ID";
@@ -59,6 +62,17 @@ public class XmlCreator {
         Node orderDate = document.getElementsByTagName(XML_ORDER_DATE).item(0);
         orderDate.setTextContent(order.getDate());
 
+        // Set the invoice party name depending on the country
+        Node invoicePartyName = document.getElementsByTagName(XML_INVOICE_PARTY_NAME).item(1);
+        if (order.getIsGerman())
+        {
+            invoicePartyName.setTextContent(GERMAN_INVOICE_PARTY_NAME);
+        }
+        else
+        {
+            invoicePartyName.setTextContent(FRANCE_INVOICE_PARTY_NAME);
+        }
+
         // Between the child notes are text nodes!
         // 1, 3, 5 are the indices of the nodes!
         Node orderItemList = document.getElementsByTagName(XML_ORDER_ITEM_LIST).item(0);
@@ -68,7 +82,7 @@ public class XmlCreator {
         double totalAmount = 0;
         for (OrderItem orderItem: order.getOrderItemList()) {
             lineItemID++;
-            orderItemList.appendChild(createOrderItem(document, lineItemID, orderItem));
+            orderItemList.appendChild(createOrderItem(document, lineItemID, orderItem, order.getIsGerman()));
             totalAmount += (orderItem.getUnitPrice() * orderItem.getQuantity());
         }
 
@@ -87,7 +101,7 @@ public class XmlCreator {
         transformer.transform(source, result);
     }
 
-    private static Node createOrderItem(Document document, int lineItemID, OrderItem orderItem) {
+    private static Node createOrderItem(Document document, int lineItemID, OrderItem orderItem, boolean isGerman) {
         Element orderItemElement = document.createElement(XML_ORDER_ITEM);
 
         orderItemElement.appendChild(createNode(document, XML_LINE_ITEM_ID, Integer.toString(lineItemID)));
@@ -106,7 +120,15 @@ public class XmlCreator {
         articlePriceElement.setAttribute("type", "gros_list");
         articlePriceElement.appendChild(createNode(document, XML_PRICE_AMOUNT, String.valueOf(orderItem.getUnitPrice())));
         articlePriceElement.appendChild(createNode(document, XML_PRICE_LINE_AMOUNT, ""));
-        articlePriceElement.appendChild(createNode(document, XML_TAX, String.valueOf(orderItem.getTax())));
+        if (isGerman)
+        {
+            articlePriceElement.appendChild(createNode(document, XML_TAX, String.valueOf(orderItem.getTax())));
+        }
+        else
+        {
+            // If the Order is not German, set the tax to zero
+            articlePriceElement.appendChild(createNode(document, XML_TAX, String.valueOf(0)));
+        }
         orderItemElement.appendChild(articlePriceElement);
 
         return orderItemElement;
