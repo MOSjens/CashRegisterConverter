@@ -22,10 +22,13 @@ public class XmlCreator {
     private static final String XML_SUFFIX = ".xml";
     private static final String GERMAN_INVOICE_PARTY_NAME = "Diverse";
     private static final String FRANCE_INVOICE_PARTY_NAME = "Diverse - Ausland";
+    private static final String GERMAN_TAX_AREA = "EU";
+    private static final String FRANCE_TAX_AREA = "non_EU";
 
     // All node names
     private static final String XML_ORDER_DATE = "ORDER_DATE";
     private static final String XML_INVOICE_PARTY_NAME = "NAME2";
+    private static final String XML_REMARK = "REMARK";
     private static final String XML_ORDER_ITEM_LIST = "ORDER_ITEM_LIST";
     private static final String XML_ORDER_ITEM = "ORDER_ITEM";
     private static final String XML_LINE_ITEM_ID = "LINE_ITEM_ID";
@@ -64,13 +67,16 @@ public class XmlCreator {
 
         // Set the invoice party name depending on the country
         Node invoicePartyName = document.getElementsByTagName(XML_INVOICE_PARTY_NAME).item(1);
+        Node taxArea = document.getElementsByTagName(XML_REMARK).item(2);
         if (order.getIsGerman())
         {
             invoicePartyName.setTextContent(GERMAN_INVOICE_PARTY_NAME);
+            taxArea.setTextContent(GERMAN_TAX_AREA);
         }
         else
         {
             invoicePartyName.setTextContent(FRANCE_INVOICE_PARTY_NAME);
+            taxArea.setTextContent(FRANCE_TAX_AREA);
         }
 
         // Between the child notes are text nodes!
