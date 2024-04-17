@@ -16,20 +16,22 @@ import java.util.List;
 public class CsvParser {
 
     private static final String PAYMENT_EC = "EC";
+    private static final String PAYMENT_CARD = "Karte"; // treat same as EC
     private static final String PAYMENT_CASH = "BAR";
     private static final String CANCELLATION = "ja";
     private static final String TAX_MODE_FRANCE = "TVA francaise";
 
     // After the france update all columns after the date column are +1
+    // In the version 1.2 update there were also column number changes
     private static final int DATE_COLUMN = 3;
     private static final int TAX_MODE_COLUMN = 4;
     private static final int PAYMENT_COLUMN = 11;
     private static final int ARTICLE_ID_COLUMN = 14;
     private static final int DESCRIPTION_COLUMN = 15;
-    private static final int QUANTITY_COLUMN = 19;
-    private static final int CANCELLATION_COLUMN = 21;
-    private static final int PRICE_COLUMN = 23;
-    private static final int TAX_COLUMN = 29;
+    private static final int QUANTITY_COLUMN = 21;
+    private static final int CANCELLATION_COLUMN = 23;
+    private static final int PRICE_COLUMN = 25;
+    private static final int TAX_COLUMN = 33;
 
     private File csvFile;
 
@@ -38,7 +40,11 @@ public class CsvParser {
     }
 
     public Order parsEcOrder() throws IOException, CsvValidationException {
-        return parsCvs(PAYMENT_EC);
+        // Since update 1.2 there are multiple payment methods possible
+        Order ecOrder = parsCvs(PAYMENT_EC);
+        Order cardOrder = parsCvs(PAYMENT_CARD);
+        ecOrder.getOrderItemList().addAll(cardOrder.getOrderItemList());
+        return ecOrder;
     }
 
     public Order parsCashOrder() throws IOException, CsvValidationException {
@@ -63,7 +69,7 @@ public class CsvParser {
         csvContent.stream()
                 .skip(1)
                 .filter(item -> item.get(PAYMENT_COLUMN).equals(payment))
-                .filter(item -> !item.get(CANCELLATION_COLUMN).equals(CANCELLATION)) // ignore canceled orders
+                .filter(item -> !item.get(CANCELLATION_COLUMN).equalsIgnoreCase(CANCELLATION)) // ignore canceled orders
                 .filter(item -> !item.get(ARTICLE_ID_COLUMN).isEmpty()) // ignore if article id is empty
                 .forEach(item -> order.getOrderItemList().add(processOrderItem(item)));
 
