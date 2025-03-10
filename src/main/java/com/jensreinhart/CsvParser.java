@@ -6,37 +6,53 @@ import com.opencsv.CSVReader;
 import com.opencsv.CSVReaderBuilder;
 import com.opencsv.exceptions.CsvValidationException;
 
-import java.io.File;
-import java.io.FileReader;
-import java.io.IOException;
+import java.io.*;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Properties;
 
 public class CsvParser {
 
-    private static final String PAYMENT_EC = "EC";
-    private static final String PAYMENT_CARD = "Karte"; // treat same as EC
-    private static final String PAYMENT_CASH = "BAR";
-    private static final String CANCELLATION = "ja";
-    private static final String TAX_MODE_FRANCE = "TVA francaise";
+    private final String PAYMENT_EC = "EC";
+    private final String PAYMENT_CARD = "Karte"; // treat same as EC
+    private final String PAYMENT_CASH = "BAR";
+    private final String CANCELLATION = "ja";
+    private final String TAX_MODE_FRANCE = "TVA francaise";
+    private final String CONFIG_FILE = "config.ini";
 
     // After the france update all columns after the date column are +1
     // In the version 1.2 update there were also column number changes
-    private static final int DATE_COLUMN = 3;
-    private static final int TAX_MODE_COLUMN = 4;
-    private static final int PAYMENT_COLUMN = 11;
-    private static final int ARTICLE_ID_COLUMN = 14;
-    private static final int DESCRIPTION_COLUMN = 15;
-    private static final int QUANTITY_COLUMN = 21;
-    private static final int CANCELLATION_COLUMN = 23;
-    private static final int PRICE_COLUMN = 25;
-    private static final int TAX_COLUMN = 33;
+    // Version 1.3: this are only fallback values, the correct ones are in the ini file.
+    private int DATE_COLUMN = 5;
+    private int TAX_MODE_COLUMN = 6;
+    private int PAYMENT_COLUMN = 13;
+    private int ARTICLE_ID_COLUMN = 16;
+    private int DESCRIPTION_COLUMN = 17;
+    private int QUANTITY_COLUMN = 21;
+    private int CANCELLATION_COLUMN = 23;
+    private int PRICE_COLUMN = 25;
+    private int TAX_COLUMN = 33;
 
-    private File csvFile;
+    private final File csvFile;
 
-    public CsvParser(File csvFile) {
+    public CsvParser(File csvFile) throws IOException, NumberFormatException {
         this.csvFile = csvFile;
+
+        // Read the ini file
+        Properties properties = new Properties();
+        InputStream inputStream = CsvParser.class.getClassLoader().getResourceAsStream(CONFIG_FILE);
+        properties.load(inputStream);
+
+        DATE_COLUMN = Integer.parseInt(properties.getProperty("Belegzeitstempel"));
+        TAX_MODE_COLUMN = Integer.parseInt(properties.getProperty("MwStModus"));
+        PAYMENT_COLUMN = Integer.parseInt(properties.getProperty("Zahlungsart"));
+        ARTICLE_ID_COLUMN = Integer.parseInt(properties.getProperty("Artikelnummer"));
+        DESCRIPTION_COLUMN = Integer.parseInt(properties.getProperty("ArtikelTextKurz"));
+        QUANTITY_COLUMN = Integer.parseInt(properties.getProperty("Menge"));
+        CANCELLATION_COLUMN = Integer.parseInt(properties.getProperty("StorniertJaNein"));
+        PRICE_COLUMN = Integer.parseInt(properties.getProperty("EinzelpreisBrutto"));
+        TAX_COLUMN = Integer.parseInt(properties.getProperty("Steuersatz"));
     }
 
     public Order parsEcOrder() throws IOException, CsvValidationException {

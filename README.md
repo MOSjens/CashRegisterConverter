@@ -36,5 +36,6 @@ mvn package
 1.0-SNAPSHOT | 15.02.2021 | initial Release version 
 1.1 | 20.09.2022 | - All column after the third where shifted by one <br /> - Multi country support: if the country is not Germany, the tax is zero
 1.2 | 17.04.2024 | - Columns in the csv where shifted again <br /> - Besides "EC" the string "Karte" also counts as card payment <br /> - The cancellation column is not case sensitive anymore
+1.3 | 10.03.2025 | - The Columns in the csv where shifted again <br /> - Column numbers can now be set in separate ini file
 
 

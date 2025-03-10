@@ -108,9 +108,10 @@ public class CashRegisterConverter extends Application
         Order cashOrder;
         Order ecOrder;
 
-        CsvParser csvParser = new CsvParser(selectedFile);
-        // TODO check for correctness of file -> alert if not correct (e.g. String comparison of first row)
         try {
+            CsvParser csvParser = new CsvParser(selectedFile);
+            // TODO check for correctness of file -> alert if not correct (e.g. String comparison of first row)
+
             cashOrder = csvParser.parsCashOrder();
             ecOrder = csvParser.parsEcOrder();
 
